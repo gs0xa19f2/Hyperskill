@@ -4,9 +4,9 @@ WITH boeing_avg_flight AS (
         AVG(TIMESTAMPDIFF(MINUTE, t.time_out, t.time_in)) AS avg_flight_duration,
         COUNT(t.plane_type) AS num_flights
     FROM 
-        Trip t
+        trip AS t
     WHERE 
-        plane_type LIKE 'Boeing%'
+        t.plane_type LIKE 'Boeing%'
 ),
 airbus_avg_flight AS (
     SELECT 
@@ -14,9 +14,9 @@ airbus_avg_flight AS (
         AVG(TIMESTAMPDIFF(MINUTE, t.time_out, t.time_in)) AS avg_flight_duration,
         COUNT(t.plane_type) AS num_flights
     FROM 
-        Trip t
+        trip AS t
     WHERE 
-        plane_type LIKE 'Airbus%'
+        t.plane_type LIKE 'Airbus%'
 )
 SELECT
     *

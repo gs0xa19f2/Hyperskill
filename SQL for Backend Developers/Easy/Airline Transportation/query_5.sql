@@ -1,17 +1,17 @@
-WITH AvgDuration AS (
+WITH avg_duration AS (
     SELECT 
         ac.company_name,
         t.town_from AS departure_city,
         t.town_to AS arrival_city,
         AVG(TIMESTAMPDIFF(MINUTE, t.time_out, t.time_in)) AS avg_flight_duration
     FROM 
-        Trip t
+        trip AS t
     JOIN 
-        Airline_company ac ON t.ID_comp = ac.ID_comp
+        airline_company AS ac ON t.id_comp = ac.id_comp
     GROUP BY 
         ac.company_name, t.town_from, t.town_to
 ),
-RankedRoutes AS (
+ranked_routes AS (
     SELECT 
         company_name,
         departure_city,
@@ -19,7 +19,7 @@ RankedRoutes AS (
         avg_flight_duration,
         ROW_NUMBER() OVER (PARTITION BY company_name ORDER BY avg_flight_duration DESC) AS rn
     FROM 
-        AvgDuration
+        avg_duration
 )
 SELECT 
     company_name,
@@ -27,6 +27,6 @@ SELECT
     arrival_city,
     avg_flight_duration
 FROM 
-    RankedRoutes
+    ranked_routes
 WHERE 
     rn <= 2;

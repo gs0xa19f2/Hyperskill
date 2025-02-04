@@ -1,32 +1,32 @@
-WITH PassengerIncomePersonal AS (
+WITH passenger_income_personal AS (
     SELECT 
-        p.ID_psg,
+        p.id_psg,
         p.passenger_name,
         SUM(TIMESTAMPDIFF(SECOND, t.time_out, t.time_in) * 0.01) AS passenger_income_dollars
     FROM
-        Passenger p
+        passenger AS p
     JOIN 
-        Pass_in_trip pit ON pit.ID_psg = p.ID_psg 
+        pass_in_trip AS pit ON pit.id_psg = p.id_psg 
     JOIN 
-        Trip t ON pit.trip_no = t.trip_no
+        trip AS t ON pit.trip_no = t.trip_no
     GROUP BY
-        p.ID_psg,
+        p.id_psg,
         p.passenger_name
 ),
-TotalIncome AS (
+total_income AS (
     SELECT 
-        ID_psg,
+        id_psg,
         passenger_name,
         passenger_income_dollars,
         SUM(passenger_income_dollars) OVER() AS total_income
     FROM 
-        PassengerIncomePersonal
+        passenger_income_personal
     ORDER BY 
         passenger_income_dollars DESC
 ),
-PassengerIncome AS (
+passenger_income AS (
     SELECT 
-        p.ID_psg,
+        p.id_psg,
         p.passenger_name,
         p.passenger_income_dollars,
         ROUND(
@@ -39,13 +39,13 @@ PassengerIncome AS (
             ELSE 'C'
         END AS category
     FROM 
-        TotalIncome p
+        total_income p
 )
 SELECT 
-    ID_psg,
+    id_psg,
     passenger_name,
     passenger_income_dollars,
     cumulative_share_percent,
     category
 FROM 
-    PassengerIncome;
+    passenger_income;
