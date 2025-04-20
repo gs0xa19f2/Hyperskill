@@ -1,0 +1,71 @@
+<div class="step-text">
+<h5 id="description">Description</h5>
+<p>QR codes are square-shaped patterns comprised of black squares on a white background. Your web service will generate QR codes and send them to clients as images.</p>
+<p>In this stage, you must create a 250x250 pixel image filled with white color. You can accomplish this using the <code class="language-java">java.awt.image.BufferedImage</code> class, which allows for image data manipulation. Here's an example:</p>
+<pre><code class="language-java">import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+
+BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+Graphics2D g = image.createGraphics();
+
+g.setColor(Color.WHITE);
+g.fillRect(0, 0, width, height);</code></pre>
+<p>In this example, first, create a <code class="language-java">BufferedImage</code> object with the specified width and height and an 8-bit RGB color space. Then, generate a <code class="language-java">Graphics2D</code> object to draw into the image. Set the color to white and draw a rectangle to fill the image with white color.</p>
+<p>Next, serialize the <code class="language-java">BufferedImage</code> and include it in the response body. There are several ways to do this, but we recommend the following two methods:</p>
+<ul>
+<li>Return the <code class="language-java">BufferedImage</code> from your request handler method and let Spring Boot serialize it for you. You'll need to create a <code class="language-java">HttpMessageConverter&lt;BufferedImage&gt;</code> bean to facilitate the serialization:</li>
+<li>
+<pre><code class="language-java">// in the REST controller class
+
+@GetMapping(path = "/api/qrcode")
+public ResponseEntity&lt;BufferedImage&gt; getImage() {
+    BufferedImage bufferedImage = ... // your BufferedImage source
+    return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_PNG)
+            .body(bufferedImage);
+}
+
+
+// in a configuration class
+
+@Bean
+public HttpMessageConverter&lt;BufferedImage&gt; bufferedImageHttpMessageConverter() {
+    return new BufferedImageHttpMessageConverter();
+}</code></pre>
+</li>
+<li>Serialize the <code class="language-java">BufferedImage</code> into a byte array and return that array from your request handler method. For serialization, you can use the following method: 
+    <pre><code class="language-java">@GetMapping(path = "/api/qrcode")
+public ResponseEntity&lt;byte[]&gt; getImage() throws IOException {
+    BufferedImage bufferedImage = ... // your BufferedImage source
+
+    try (var baos = new ByteArrayOutputStream()) {
+        ImageIO.write(bufferedImage, "png", baos); // writing the image in the PNG format
+        byte[] bytes = baos.toByteArray();
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    } catch (IOException e) {
+        // handle the IOEexception
+    }
+}</code></pre>
+</li>
+</ul>
+<p></p><div class="alert alert-warning">It's important to programmatically create the image, as image editors can embed metadata in the image file, which could cause tests to fail.</div>
+<h5 id="objectives">Objectives</h5>
+<p>In this stage, you should:</p>
+<ul>
+<li>Modify the <code class="language-java">GET /api/qrcode</code> to return the status code <code class="language-java">200 OK</code> and an image as the response body. The image must be a white square, 250x250 pixels, in PNG format.</li>
+<li>Set the correct <code class="language-java">Content-Type</code> header of the response to indicate that the content type is <code class="language-java">image/png</code>.</li>
+</ul>
+<h5 id="examples">Examples</h5>
+<p><strong>Example 1</strong>. <em>a GET request to /api/health</em>:</p>
+<p><em>Response</em>: <code class="language-java">200 OK</code></p>
+<p><strong>Example 2</strong>. <em>a GET request to /api/qrcode</em>:</p>
+<p><em>Response code</em>: <code class="language-java">200 OK</code></p>
+<p><em>Response header</em>: <code class="language-java">Content-Type: image/png</code></p>
+<p><em>Response body</em>: byte array</p>
+</div>
