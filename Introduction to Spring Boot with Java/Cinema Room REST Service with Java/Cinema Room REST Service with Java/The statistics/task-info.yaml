@@ -1,0 +1,24 @@
+type: edu
+files:
+  - name: src/cinema/Main.java
+    visible: true
+    learner_created: false
+  - name: src/resources/application.properties
+    visible: true
+    learner_created: false
+  - name: build.gradle
+    visible: true
+    learner_created: false
+  - name: test/CinemaTests.java
+    visible: false
+    learner_created: false
+  - name: src/cinema/SeatsController.java
+    visible: true
+    learner_created: true
+feedback_link: https://hyperskill.org/projects/189/stages/948/implement#comment
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">Hyperskill</a>
+    to continue learning.
+  time: "Mon, 21 Apr 2025 17:10:01 UTC"
+record: -1
